@@ -11,11 +11,11 @@ export default function QuestionsContainer({ data }) {
           Question
           <span>{indexOfPage + 1}</span>
           from
-          <span>{data.length}</span>
+          <span>{data.length + 1}</span>
         </h3>
       </div>
       <Questions
-        question={data}
+        questions={data}
         indexOfPage={indexOfPage}
         setIndexOfPage={setIndexOfPage}
       />

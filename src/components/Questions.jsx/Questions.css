@@ -1,7 +1,5 @@
-.correct {
-  background-color: green;
-}
-
-.wrong {
-  background-color: red;
+.answers {
+  margin: 0 auto 20px auto;
+  border: 1px solid black;
+  width: 200px;
 }
