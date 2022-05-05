@@ -1,8 +1,25 @@
 import { useState } from "react";
 import shortid from "shortid";
-import "./Questions.css";
+import {
+  Answers,
+  Correct,
+  Wrong,
+  Progress,
+  NameQuestion,
+  Button,
+  ButtonContainer,
+} from "./Questions.styled";
+import Modal from "../Modal/Modal";
+import VictoryPage from "../VictoryPage/VictoryPage";
 
-export default function Questions({ questions, indexOfPage, setIndexOfPage }) {
+export default function Questions({
+  questions,
+  indexOfPage,
+  setIndexOfPage,
+  restart,
+  setOver,
+  over,
+}) {
   const [indexOfQuestion, setIndexOfQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [completedAnswers, setCompletedAnswers] = useState([]);
@@ -11,14 +28,12 @@ export default function Questions({ questions, indexOfPage, setIndexOfPage }) {
   const [indexOfClick, setIndexOfClick] = useState(null);
   const [clickOnAnswer, setClickOnAnswer] = useState(false);
   const [active, setActive] = useState(null);
-  const [selectAnswer, setSelectAnswer] = useState(false);
+  const [selectedEl, setSelectedEl] = useState(null);
 
   const nextQuestion = () => {
     randomQuestion();
-    // console.log(completedAnswers, "completedAnswers");
     setClickOnAnswer(false);
-    setSelectAnswer(false);
-    if (indexOfQuestion === questions.length + 1) {
+    if (indexOfQuestion === questions.length) {
       console.log("last");
     }
     setIndexOfPage((state) => state + 1);
@@ -26,55 +41,52 @@ export default function Questions({ questions, indexOfPage, setIndexOfPage }) {
   };
 
   const randomQuestion = () => {
-    const randomNumber = Math.floor(Math.random() * (questions.length - 1));
+    const randomNumber = Math.floor(Math.random() * questions.length);
     if (completedAnswers.length === 0) {
       setIndexOfQuestion(randomNumber);
     }
     if (indexOfPage === questions.length) {
-      console.log(2);
       quizOver();
-    } else {
-      if (completedAnswers.length > 0) {
-        if (completedAnswers.includes(randomNumber)) {
-          randomQuestion();
-        } else {
-          setIndexOfQuestion(randomNumber);
-        }
-        // if (item === randomNumber) {
-        //   setHitDublicate(true);
-        //   console.log(4);
-        // };
-        // if (hitDublicate) {
-        //   console.log(5);
-        //   randomQuestion();
+    }
+    if (completedAnswers.length > 0) {
+      if (completedAnswers.includes(randomNumber)) {
+        setHitDublicate(true);
+        randomQuestion();
+        return;
+      } else if (hitDublicate) {
+        setHitDublicate(false);
+        setIndexOfQuestion(randomNumber);
       }
     }
     setCompletedAnswers((state) => [...state, indexOfQuestion]);
   };
 
   const checkAnswer = (el) => {
-    setSelectAnswer(true);
+    if (clickOnAnswer) {
+      return;
+    }
     setActive(el.target.id);
+    setSelectedEl(el.target.textContent);
     setIndexOfClick(
       questions[indexOfQuestion].options.indexOf(el.target.textContent)
     );
   };
-
+  console.log(active);
   const showAnswer = () => {
-    setSelectAnswer(false);
     const rightAnswer = questions[indexOfQuestion].rightAnswer;
     setClickOnAnswer(true);
     if (indexOfClick === rightAnswer) {
       setScore((state) => state + 1);
       setCorrect(true);
     } else {
+      console.log("wrong");
       setCorrect(false);
     }
   };
 
-  // useEffect(() => {
-  //   randomQuestion();
-  // }, [nextQuestion]);
+  const overVictorine = () => {
+    setOver(true);
+  };
 
   const quizOver = () => {
     console.log("Игра окончена");
@@ -83,85 +95,69 @@ export default function Questions({ questions, indexOfPage, setIndexOfPage }) {
   window.addEventListener("load", () => randomQuestion());
 
   const answers = questions.map((answers) => answers);
-  console.log(indexOfQuestion);
-  console.log(questions[indexOfQuestion]);
+  // console.log(
+  //   clickOnAnswer,
+  //   correct,
+  //   indexOfClick,
+  //   indexOfClick === Number(active)
+  // );
+  // console.log(Number(active));
+  // console.log(
+  //   clickOnAnswer && correct && indexOfClick && indexOfClick === Number(active)
+  //     ? "CORRECT"
+  //     : ""
+  // );
   return (
-    <>
-      <div>{questions[indexOfQuestion].question}</div>
+    <div>
+      <NameQuestion>{questions[indexOfQuestion].question}</NameQuestion>
       <div className="options" onClick={checkAnswer}>
         {answers[indexOfQuestion].options.map((answer, index) => {
           return (
-            <div
+            <Answers
               key={shortid.generate()}
-              style={{
-                backgroundColor:
-                  (Number(active) === indexOfClick &&
-                    selectAnswer &&
-                    "yellow") ||
-                  (clickOnAnswer &&
-                    correct &&
-                    Number(active) === indexOfClick &&
-                    "green") ||
-                  (!correct &&
-                    clickOnAnswer &&
-                    Number(active) === indexOfClick &&
-                    "red"),
-              }}
               id={index}
-              className="answers"
-              htmlFor="accept"
+              isSelected={answer === selectedEl}
+              isDisabled={clickOnAnswer}
             >
               {answer}
-            </div>
+            </Answers>
           );
         })}
       </div>
-      <div className="button">
-        {indexOfPage === questions.length ? (
-          <button
-            type="button"
-            onClick={() =>
-              alert(
-                `Поздравляю, вы пройшли тест с ${score} правильными ответами`
-              )
-            }
-          >
+      <ButtonContainer>
+        {indexOfPage === questions.length - 1 ? (
+          <Button type="button" onClick={overVictorine}>
             Finish
-          </button>
+          </Button>
         ) : (
-          <button type="button" onClick={nextQuestion}>
+          <Button type="button" onClick={nextQuestion}>
             Next
-          </button>
+          </Button>
         )}
-
-        <hr />
-        <button type="button" onClick={showAnswer}>
+        {clickOnAnswer &&
+          correct &&
+          indexOfClick &&
+          indexOfClick === Number(active) && <Correct>CORRECT</Correct>}
+        {clickOnAnswer && !correct && <Wrong>INCORRECT</Wrong>}
+        <Button type="button" onClick={showAnswer}>
           Answer
-        </button>
-      </div>
-      <div id="answers-tracker"></div>
-    </>
+        </Button>
+      </ButtonContainer>
+      <Progress
+        style={{ width: `${(750 / questions.length) * indexOfPage}px` }}
+        id="answers-tracker"
+      ></Progress>
+      {over && (
+        <Modal>
+          <VictoryPage
+            score={score}
+            restart={restart}
+            setOver={setOver}
+            setComplete={setCompletedAnswers}
+            page={setIndexOfPage}
+          />
+        </Modal>
+      )}
+    </div>
   );
 }
-
-//  <div
-//    key={shortid.generate()}
-//    style={{
-//      backgroundColor:
-//        (active && active === indexOfClick && selectAnswer && "yellow") ||
-//        (clickOnAnswer &&
-//          correct &&
-//          active &&
-//          active === indexOfClick &&
-//          "green") ||
-//        (!correct &&
-//          clickOnAnswer &&
-//          active &&
-//          active === indexOfClick &&
-//          "red"),
-//    }}
-//    id={index}
-//    onClick={() => setSelectAnswer(true)}
-//  >
-//    {answer}
-//  </div>;
