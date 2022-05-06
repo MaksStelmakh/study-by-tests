@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/study-by-tests/static/css/main.c5f3f401.css",
+    "main.js": "/study-by-tests/static/js/main.7108153f.js",
+    "index.html": "/study-by-tests/index.html",
+    "main.c5f3f401.css.map": "/study-by-tests/static/css/main.c5f3f401.css.map",
+    "main.7108153f.js.map": "/study-by-tests/static/js/main.7108153f.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.c5f3f401.css",
+    "static/js/main.7108153f.js"
+  ]
+}
