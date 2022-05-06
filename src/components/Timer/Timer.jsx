@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { TimerDiv } from "./Timer.styled";
+// import svg from "../../images/symbol-defs.svg";
 
 export default function Timer({ minutes = 0, seconds = 0, over, setOver }) {
   const [paused, setPaused] = useState(false);
@@ -14,7 +16,6 @@ export default function Timer({ minutes = 0, seconds = 0, over, setOver }) {
       setTime([m, s - 1]);
     }
   };
-
   const reset = () => {
     if (minutes === "" || seconds === "") {
       setTime([1, 0]);
@@ -30,15 +31,17 @@ export default function Timer({ minutes = 0, seconds = 0, over, setOver }) {
   });
 
   return (
-    <div>
+    <TimerDiv>
       <p>{`${m.toString().padStart(2, "0")}:${s
         .toString()
         .padStart(2, "0")}`}</p>
-      <div>{over ? "Time's up!" : ""}</div>
-      <button onClick={() => setPaused(!paused)}>
-        {paused ? "Resume" : "Pause"}
-      </button>
-      <button onClick={() => reset()}>Restart</button>
-    </div>
+      <div>
+        <button onClick={() => setPaused(!paused)}>
+          {paused ? "▶️" : `⏸`}
+        </button>
+        <h3>Timer</h3>
+        <button onClick={() => reset()}>🔄</button>
+      </div>
+    </TimerDiv>
   );
 }

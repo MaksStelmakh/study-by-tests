@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnswersContainer } from "./QuestionsContainer.styled";
+import { AnswersContainer, Form } from "./QuestionsContainer.styled";
 import Questions from "../Questions.jsx/Questions";
 import Timer from "../Timer/Timer";
 import Modal from "../Modal/Modal";
@@ -10,11 +10,17 @@ export default function QuestionsContainer({ data }) {
   const [startQuest, setStartQuest] = useState(false);
   const [second, setSecond] = useState("");
   const [minute, setMinute] = useState("");
+  const [level, setLevel] = useState(5);
   const [over, setOver] = useState(false);
   const [endGame, setEndGame] = useState(false);
+  const [completedAnswers, setCompletedAnswers] = useState([]);
+  const [indexOfQuestion, setIndexOfQuestion] = useState(0);
 
   const startingQuest = (el) => {
     el.preventDefault();
+    const randomNumber = Math.floor(Math.random() * level);
+    setIndexOfQuestion(randomNumber);
+    setCompletedAnswers((state) => [...state, randomNumber]);
     setStartQuest(true);
   };
   const saveTime = (event) => {
@@ -23,16 +29,19 @@ export default function QuestionsContainer({ data }) {
       setSecond(value);
     } else if (name === "minutes") {
       setMinute(value);
+    } else if (name === "level") {
+      setLevel(value);
     } else {
       alert("Something wrong!");
     }
   };
-
   return (
     <>
       {!startQuest && (
-        <form onSubmit={startingQuest}>
-          <p>Minutes</p>
+        <Form onSubmit={startingQuest}>
+          Виберіть час та складність тесту!
+          <hr />
+          <p>Хвилини</p>
           <input
             type="number"
             onChange={saveTime}
@@ -43,7 +52,7 @@ export default function QuestionsContainer({ data }) {
             title="Не более двух цифр"
             required
           />
-          <p>Seconds</p>
+          <p>Секунди</p>
           <input
             type="number"
             onChange={saveTime}
@@ -54,8 +63,17 @@ export default function QuestionsContainer({ data }) {
             title="Не более двух цифр"
             required
           />
+          <p>Кількість питаннь</p>
+          <select name="level" onChange={saveTime}>
+            <option value="5" defaultValue>
+              5 питаннь
+            </option>
+            <option value="10">10 питаннь</option>
+            <option value="15">15 питаннь</option>
+            <option value="25">25 питаннь</option>
+          </select>
           <button type="submit">Start</button>
-        </form>
+        </Form>
       )}
       {startQuest && (
         <div>
@@ -69,7 +87,7 @@ export default function QuestionsContainer({ data }) {
             <div>
               <h3>
                 Питання&nbsp;<span>{indexOfPage + 1}&nbsp;</span>з&nbsp;
-                <span>{data.length}</span>
+                <span>{level}</span>
               </h3>
             </div>
             <hr />
@@ -80,13 +98,25 @@ export default function QuestionsContainer({ data }) {
               restart={setStartQuest}
               setOver={setEndGame}
               over={endGame}
+              level={level}
+              completedAnswers={completedAnswers}
+              setCompletedAnswers={setCompletedAnswers}
+              indexOfQuestion={indexOfQuestion}
+              setIndexOfQuestion={setIndexOfQuestion}
+              setLevel={setLevel}
             />
           </AnswersContainer>
         </div>
       )}
       {over && (
         <Modal>
-          <TimeOver restart={setStartQuest} setActive={setOver} />
+          <TimeOver
+            restart={setStartQuest}
+            setActive={setOver}
+            page={setIndexOfPage}
+            setCompletedAnswers={setCompletedAnswers}
+            setLevel={setLevel}
+          />
         </Modal>
       )}
     </>

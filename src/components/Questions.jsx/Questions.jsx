@@ -8,6 +8,7 @@ import {
   NameQuestion,
   Button,
   ButtonContainer,
+  DivAnswer,
 } from "./Questions.styled";
 import Modal from "../Modal/Modal";
 import VictoryPage from "../VictoryPage/VictoryPage";
@@ -19,46 +20,38 @@ export default function Questions({
   restart,
   setOver,
   over,
+  level,
+  completedAnswers,
+  setCompletedAnswers,
+  indexOfQuestion,
+  setIndexOfQuestion,
+  setLevel,
 }) {
-  const [indexOfQuestion, setIndexOfQuestion] = useState(0);
   const [score, setScore] = useState(0);
-  const [completedAnswers, setCompletedAnswers] = useState([]);
-  const [hitDublicate, setHitDublicate] = useState(false);
   const [correct, setCorrect] = useState(false);
   const [indexOfClick, setIndexOfClick] = useState(null);
   const [clickOnAnswer, setClickOnAnswer] = useState(false);
   const [active, setActive] = useState(null);
   const [selectedEl, setSelectedEl] = useState(null);
+  const [rank, setRank] = useState(level - 1);
 
   const nextQuestion = () => {
     randomQuestion();
     setClickOnAnswer(false);
-    if (indexOfQuestion === questions.length) {
-      console.log("last");
-    }
     setIndexOfPage((state) => state + 1);
     setIndexOfQuestion((state) => state + 1);
   };
 
   const randomQuestion = () => {
-    const randomNumber = Math.floor(Math.random() * questions.length);
-    if (completedAnswers.length === 0) {
-      setIndexOfQuestion(randomNumber);
-    }
-    if (indexOfPage === questions.length) {
-      quizOver();
-    }
+    const randomNumber = Math.floor(Math.random() * level);
+    setCompletedAnswers((state) => [...state, randomNumber]);
     if (completedAnswers.length > 0) {
       if (completedAnswers.includes(randomNumber)) {
-        setHitDublicate(true);
         randomQuestion();
         return;
-      } else if (hitDublicate) {
-        setHitDublicate(false);
-        setIndexOfQuestion(randomNumber);
       }
+      setIndexOfQuestion(randomNumber);
     }
-    setCompletedAnswers((state) => [...state, indexOfQuestion]);
   };
 
   const checkAnswer = (el) => {
@@ -71,7 +64,7 @@ export default function Questions({
       questions[indexOfQuestion].options.indexOf(el.target.textContent)
     );
   };
-  console.log(active);
+
   const showAnswer = () => {
     const rightAnswer = questions[indexOfQuestion].rightAnswer;
     setClickOnAnswer(true);
@@ -88,25 +81,14 @@ export default function Questions({
     setOver(true);
   };
 
-  const quizOver = () => {
-    console.log("Игра окончена");
-  };
-
   window.addEventListener("load", () => randomQuestion());
 
   const answers = questions.map((answers) => answers);
-  // console.log(
-  //   clickOnAnswer,
-  //   correct,
-  //   indexOfClick,
-  //   indexOfClick === Number(active)
-  // );
-  // console.log(Number(active));
-  // console.log(
-  //   clickOnAnswer && correct && indexOfClick && indexOfClick === Number(active)
-  //     ? "CORRECT"
-  //     : ""
-  // );
+  if (!questions[indexOfQuestion]) {
+    randomQuestion();
+    return;
+  }
+
   return (
     <div>
       <NameQuestion>{questions[indexOfQuestion].question}</NameQuestion>
@@ -125,7 +107,7 @@ export default function Questions({
         })}
       </div>
       <ButtonContainer>
-        {indexOfPage === questions.length - 1 ? (
+        {indexOfPage === level - 1 ? (
           <Button type="button" onClick={overVictorine}>
             Finish
           </Button>
@@ -134,17 +116,18 @@ export default function Questions({
             Next
           </Button>
         )}
-        {clickOnAnswer &&
-          correct &&
-          indexOfClick &&
-          indexOfClick === Number(active) && <Correct>CORRECT</Correct>}
-        {clickOnAnswer && !correct && <Wrong>INCORRECT</Wrong>}
+        <DivAnswer>
+          {clickOnAnswer && correct && indexOfClick === Number(active) && (
+            <Correct>CORRECT</Correct>
+          )}
+          {clickOnAnswer && !correct && <Wrong>INCORRECT</Wrong>}
+        </DivAnswer>
         <Button type="button" onClick={showAnswer}>
           Answer
         </Button>
       </ButtonContainer>
       <Progress
-        style={{ width: `${(750 / questions.length) * indexOfPage}px` }}
+        style={{ width: `${(700 / rank) * indexOfPage}px` }}
         id="answers-tracker"
       ></Progress>
       {over && (
@@ -155,9 +138,32 @@ export default function Questions({
             setOver={setOver}
             setComplete={setCompletedAnswers}
             page={setIndexOfPage}
+            level={level}
+            setLevel={setLevel}
           />
         </Modal>
       )}
     </div>
   );
 }
+
+// const randomQuestion = () => {
+//   const randomNumber = Math.floor(Math.random() * level);
+//   setCompletedAnswers((state) => [...state, randomNumber]);
+//   if (completedAnswers.length === 0) {
+//     console.log("туть");
+//     setIndexOfQuestion(randomNumber);
+//   }
+//   console.log(completedAnswers, 1);
+//   if (completedAnswers.length > 0) {
+//     console.log("tyt1");
+//     if (completedAnswers.includes(randomNumber)) {
+//       console.log("tyt2");
+//       console.log(completedAnswers, 2);
+//       randomQuestion();
+//     } else {
+//       setIndexOfQuestion(randomNumber);
+//       setCompletedAnswers((state) => [...state, indexOfQuestion]);
+//     }
+//   }
+// };

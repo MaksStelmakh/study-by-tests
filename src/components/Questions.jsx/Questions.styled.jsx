@@ -5,7 +5,7 @@ export const Answers = styled.div`
   pointer-events: ${(p) => (p.isDisabled ? "none" : "auto")};
   border: 1px solid black;
   width: auto;
-  height: 40px;
+  min-height: 40px;
   margin: 0 auto 20px auto;
   border-radius: 5px;
   cursor: pointer;
@@ -19,20 +19,25 @@ export const Answers = styled.div`
   }
 `;
 
-export const Correct = styled.div`
+export const Correct = styled.p`
   color: green;
-  width: 150px;
-  height: 50px;
-  border-radius: 40%;
-  box-shadow: 0px 0px 30px 18px rgba(0, 255, 19, 0.5);
+  font-size: 30px;
+  font-weight: bold;
+
+  @media screen and (max-width: 480px) {
+    font-size: 15px;
+    line-height: 2.6;
+  }
 `;
 
-export const Wrong = styled.div`
+export const Wrong = styled.p`
   color: red;
-  width: 150px;
-  height: 50px;
-  border-radius: 40%;
-  box-shadow: 0px 0px 41px 3px rgba(255, 0, 0, 1);
+  font-size: 30px;
+  font-weight: bold;
+  @media screen and (max-width: 480px) {
+    font-size: 12px;
+    line-height: 3.2;
+  }
 `;
 
 export const Progress = styled.div`
@@ -41,6 +46,10 @@ export const Progress = styled.div`
   border-radius: 5px;
   margin-top: 20px;
   transition: all 250ms linear;
+
+  @media screen and (max-width: 800px) {
+    display: none;
+  }
 `;
 
 export const NameQuestion = styled.p`
@@ -82,6 +91,22 @@ export const Button = styled.button`
 `;
 
 export const ButtonContainer = styled.div`
+  margin-top: 10px;
   display: flex;
   justify-content: space-between;
+`;
+
+export const DivAnswer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-self: center;
+  width: 250px;
+  height: 40px;
+  background-color: #dcdcdc;
+  border-radius: 5px;
+  border: 2px solid black;
+
+  @media screen and (max-width: 470px) {
+    width: 30%;
+  }
 `;
