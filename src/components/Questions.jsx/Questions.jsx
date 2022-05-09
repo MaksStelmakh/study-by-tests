@@ -9,9 +9,12 @@ import {
   Button,
   ButtonContainer,
   DivAnswer,
+  HomeProgress,
 } from "./Questions.styled";
 import Modal from "../Modal/Modal";
 import VictoryPage from "../VictoryPage/VictoryPage";
+import PropTypes from "prop-types";
+import { CSSTransition } from "react-transition-group";
 
 export default function Questions({
   questions,
@@ -26,6 +29,7 @@ export default function Questions({
   indexOfQuestion,
   setIndexOfQuestion,
   setLevel,
+  setPaused,
 }) {
   const [score, setScore] = useState(0);
   const [correct, setCorrect] = useState(false);
@@ -79,6 +83,7 @@ export default function Questions({
 
   const overVictorine = () => {
     setOver(true);
+    setPaused(true);
   };
 
   window.addEventListener("load", () => randomQuestion());
@@ -109,27 +114,41 @@ export default function Questions({
       <ButtonContainer>
         {indexOfPage === level - 1 ? (
           <Button type="button" onClick={overVictorine}>
-            Finish
+            Закiнчити
           </Button>
         ) : (
           <Button type="button" onClick={nextQuestion}>
-            Next
+            Наступне
           </Button>
         )}
         <DivAnswer>
-          {clickOnAnswer && correct && indexOfClick === Number(active) && (
+          <CSSTransition
+            in={clickOnAnswer && correct && indexOfClick === Number(active)}
+            classNames="alert"
+            timeout={500}
+            unmountOnExit
+          >
             <Correct>CORRECT</Correct>
-          )}
-          {clickOnAnswer && !correct && <Wrong>INCORRECT</Wrong>}
+          </CSSTransition>
+          <CSSTransition
+            in={clickOnAnswer && !correct}
+            classNames="alert"
+            timeout={500}
+            unmountOnExit
+          >
+            <Wrong>INCORRECT</Wrong>
+          </CSSTransition>
         </DivAnswer>
         <Button type="button" onClick={showAnswer}>
-          Answer
+          Затвердити
         </Button>
       </ButtonContainer>
-      <Progress
-        style={{ width: `${(700 / rank) * indexOfPage}px` }}
-        id="answers-tracker"
-      ></Progress>
+      <HomeProgress>
+        <Progress
+          style={{ width: `${(685 / rank) * indexOfPage}px` }}
+          id="answers-tracker"
+        ></Progress>
+      </HomeProgress>
       {over && (
         <Modal>
           <VictoryPage
@@ -147,23 +166,24 @@ export default function Questions({
   );
 }
 
-// const randomQuestion = () => {
-//   const randomNumber = Math.floor(Math.random() * level);
-//   setCompletedAnswers((state) => [...state, randomNumber]);
-//   if (completedAnswers.length === 0) {
-//     console.log("туть");
-//     setIndexOfQuestion(randomNumber);
-//   }
-//   console.log(completedAnswers, 1);
-//   if (completedAnswers.length > 0) {
-//     console.log("tyt1");
-//     if (completedAnswers.includes(randomNumber)) {
-//       console.log("tyt2");
-//       console.log(completedAnswers, 2);
-//       randomQuestion();
-//     } else {
-//       setIndexOfQuestion(randomNumber);
-//       setCompletedAnswers((state) => [...state, indexOfQuestion]);
-//     }
-//   }
-// };
+Questions.protoTypes = {
+  questions: PropTypes.arrayOf(
+    PropTypes.shape({
+      question: PropTypes.string.isRequired,
+      options: PropTypes.array.isRequired,
+      rightAnswer: PropTypes.number.isRequired,
+    })
+  ),
+  indexOfPage: PropTypes.number.isRequired,
+  setIndexOfPage: PropTypes.func.isRequired,
+  restart: PropTypes.func.isRequired,
+  setOver: PropTypes.func.isRequired,
+  over: PropTypes.bool.isRequired,
+  level: PropTypes.number.isRequired,
+  completedAnswers: PropTypes.array.isRequired,
+  setCompletedAnswers: PropTypes.func.isRequired,
+  indexOfQuestion: PropTypes.number.isRequired,
+  setIndexOfQuestion: PropTypes.func.isRequired,
+  setLevel: PropTypes.func.isRequired,
+  setPaused: PropTypes.func.isRequired,
+};

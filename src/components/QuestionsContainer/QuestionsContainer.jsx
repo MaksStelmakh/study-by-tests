@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { AnswersContainer, Form } from "./QuestionsContainer.styled";
+import {
+  AnswersContainer,
+  Form,
+  MainContainer,
+} from "./QuestionsContainer.styled";
 import Questions from "../Questions.jsx/Questions";
 import Timer from "../Timer/Timer";
 import Modal from "../Modal/Modal";
 import TimeOver from "../TimeOver/TimeOver";
+import PropTypes from "prop-types";
+import { CSSTransition } from "react-transition-group";
 
 export default function QuestionsContainer({ data }) {
   const [indexOfPage, setIndexOfPage] = useState(0);
@@ -15,6 +21,7 @@ export default function QuestionsContainer({ data }) {
   const [endGame, setEndGame] = useState(false);
   const [completedAnswers, setCompletedAnswers] = useState([]);
   const [indexOfQuestion, setIndexOfQuestion] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   const startingQuest = (el) => {
     el.preventDefault();
@@ -36,12 +43,57 @@ export default function QuestionsContainer({ data }) {
     }
   };
   return (
-    <>
-      {!startQuest && (
+    <MainContainer>
+      <CSSTransition
+        in={startQuest}
+        classNames="alert"
+        timeout={500}
+        unmountOnExit
+      >
+        <div>
+          <Timer
+            minutes={Number(minute)}
+            seconds={Number(second)}
+            over={over}
+            setOver={setOver}
+            paused={paused}
+          />
+          <AnswersContainer>
+            <div>
+              <h3>
+                Питання&nbsp;<span>{indexOfPage + 1}&nbsp;</span>з&nbsp;
+                <span>{level}</span>
+              </h3>
+            </div>
+            <hr />
+            <Questions
+              questions={data}
+              indexOfPage={indexOfPage}
+              setIndexOfPage={setIndexOfPage}
+              restart={setStartQuest}
+              setOver={setEndGame}
+              over={endGame}
+              level={level}
+              completedAnswers={completedAnswers}
+              setCompletedAnswers={setCompletedAnswers}
+              indexOfQuestion={indexOfQuestion}
+              setIndexOfQuestion={setIndexOfQuestion}
+              setLevel={setLevel}
+              setPaused={setPaused}
+            />
+          </AnswersContainer>
+        </div>
+      </CSSTransition>
+      <CSSTransition
+        in={!startQuest}
+        classNames="alert"
+        timeout={500}
+        unmountOnExit
+      >
         <Form onSubmit={startingQuest}>
           Виберіть час та складність тесту!
           <hr />
-          <p>Хвилини</p>
+          <p className="mode">Хвилини</p>
           <input
             type="number"
             onChange={saveTime}
@@ -72,42 +124,10 @@ export default function QuestionsContainer({ data }) {
             <option value="15">15 питаннь</option>
             <option value="25">25 питаннь</option>
           </select>
-          <button type="submit">Start</button>
+          <button type="submit">Почати</button>
         </Form>
-      )}
-      {startQuest && (
-        <div>
-          <Timer
-            minutes={Number(minute)}
-            seconds={Number(second)}
-            over={over}
-            setOver={setOver}
-          />
-          <AnswersContainer>
-            <div>
-              <h3>
-                Питання&nbsp;<span>{indexOfPage + 1}&nbsp;</span>з&nbsp;
-                <span>{level}</span>
-              </h3>
-            </div>
-            <hr />
-            <Questions
-              questions={data}
-              indexOfPage={indexOfPage}
-              setIndexOfPage={setIndexOfPage}
-              restart={setStartQuest}
-              setOver={setEndGame}
-              over={endGame}
-              level={level}
-              completedAnswers={completedAnswers}
-              setCompletedAnswers={setCompletedAnswers}
-              indexOfQuestion={indexOfQuestion}
-              setIndexOfQuestion={setIndexOfQuestion}
-              setLevel={setLevel}
-            />
-          </AnswersContainer>
-        </div>
-      )}
+      </CSSTransition>
+
       {over && (
         <Modal>
           <TimeOver
@@ -119,6 +139,16 @@ export default function QuestionsContainer({ data }) {
           />
         </Modal>
       )}
-    </>
+    </MainContainer>
   );
 }
+
+QuestionsContainer.protoTypes = {
+  data: PropTypes.arrayOf(
+    PropTypes.shape({
+      question: PropTypes.string.isRequired,
+      options: PropTypes.array.isRequired,
+      rightAnswer: PropTypes.number.isRequired,
+    })
+  ),
+};

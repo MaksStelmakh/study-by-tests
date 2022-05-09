@@ -1,12 +1,32 @@
 import styled from "@emotion/styled";
 
+export const MainContainer = styled.div`
+  .alert-enter {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  .alert-enter-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 300ms, transform 300ms;
+  }
+  .alert-exit {
+    opacity: 1;
+  }
+  .alert-exit-active {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 300ms, transform 300ms;
+  }
+`;
+
 export const AnswersContainer = styled.div`
   width: 700px;
   height: auto;
   border-radius: 10px;
   padding: 20px;
   margin: 25px auto 0 auto;
-  box-shadow: 0px 0px 12px 4px rgba(34, 60, 80, 0.2);
+  box-shadow: 0px 0px 12px 4px rgba(34, 60, 80, 0.5);
   background-color: #fffafa;
 
   @media screen and (max-width: 800px) {
@@ -28,6 +48,7 @@ export const Form = styled.form`
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 15px;
+  box-shadow: 0px 0px 12px 4px rgba(34, 60, 80, 0.5);
 
   @media screen and (max-width: 470px) {
     width: 80%;

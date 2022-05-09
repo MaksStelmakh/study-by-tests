@@ -40,11 +40,23 @@ export const Wrong = styled.p`
   }
 `;
 
+export const HomeProgress = styled.div`
+  height: 25px;
+  width: 690px;
+  background-color: #c0c0c0;
+  border-radius: 10px;
+  margin-top: 20px;
+  padding: 10px 5px 0 5px;
+
+  @media screen and (max-width: 800px) {
+    display: none;
+  }
+`;
+
 export const Progress = styled.div`
   background-color: green;
-  height: 20px;
+  height: 15px;
   border-radius: 5px;
-  margin-top: 20px;
   transition: all 250ms linear;
 
   @media screen and (max-width: 800px) {
@@ -88,6 +100,11 @@ export const Button = styled.button`
   &:focus {
     opacity: 0.75;
   }
+
+  @media screen and (max-width: 570px) {
+    padding: 9px 10px 8px;
+    font-size: 13px;
+  }
 `;
 
 export const ButtonContainer = styled.div`
@@ -108,5 +125,23 @@ export const DivAnswer = styled.div`
 
   @media screen and (max-width: 470px) {
     width: 30%;
+  }
+
+  .alert-enter {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  .alert-enter-active {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 300ms, transform 300ms;
+  }
+  .alert-exit {
+    opacity: 1;
+  }
+  .alert-exit-active {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: opacity 300ms, transform 300ms;
   }
 `;

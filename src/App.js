@@ -1,12 +1,11 @@
 import QuestionsContainer from "./components/QuestionsContainer/QuestionsContainer";
 import { data } from "./question/data";
-import { MainContainer } from "./App.styled";
 
 function App() {
   return (
-    <MainContainer>
+    <div>
       <QuestionsContainer data={data} />
-    </MainContainer>
+    </div>
   );
 }
 

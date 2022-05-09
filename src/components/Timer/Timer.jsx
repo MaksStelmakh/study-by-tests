@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
 import { TimerDiv } from "./Timer.styled";
-// import svg from "../../images/symbol-defs.svg";
+import PropTypes from "prop-types";
 
-export default function Timer({ minutes = 0, seconds = 0, over, setOver }) {
-  const [paused, setPaused] = useState(false);
+export default function Timer({
+  minutes = 0,
+  seconds = 0,
+  over,
+  setOver,
+  paused,
+}) {
   const [[m, s], setTime] = useState([minutes, seconds]);
 
   const tick = () => {
@@ -15,14 +20,6 @@ export default function Timer({ minutes = 0, seconds = 0, over, setOver }) {
     } else {
       setTime([m, s - 1]);
     }
-  };
-  const reset = () => {
-    if (minutes === "" || seconds === "") {
-      setTime([1, 0]);
-    }
-    setTime([parseInt(minutes), parseInt(seconds)]);
-    setPaused(false);
-    setOver(false);
   };
 
   useEffect(() => {
@@ -36,12 +33,16 @@ export default function Timer({ minutes = 0, seconds = 0, over, setOver }) {
         .toString()
         .padStart(2, "0")}`}</p>
       <div>
-        <button onClick={() => setPaused(!paused)}>
-          {paused ? "▶️" : `⏸`}
-        </button>
         <h3>Timer</h3>
-        <button onClick={() => reset()}>🔄</button>
       </div>
     </TimerDiv>
   );
 }
+
+Timer.protoTypes = {
+  minutes: PropTypes.number.isRequired,
+  seconds: PropTypes.number.isRequired,
+  over: PropTypes.bool.isRequired,
+  setOver: PropTypes.func.isRequired,
+  paused: PropTypes.bool.isRequired,
+};

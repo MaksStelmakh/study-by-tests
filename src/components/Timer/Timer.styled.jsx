@@ -22,26 +22,13 @@ export const TimerDiv = styled.div`
 
   div {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     margin-top: 10px;
+  }
 
-    button {
-      border: none;
-      cursor: pointer;
-      transition: all 250ms linear;
-      background-color: inherit;
-      font-size: 28px;
-      transition: all 250ms linear;
-
-      &:hover {
-        opacity: 0.7;
-      }
-    }
-
-    h3 {
-      margin: 0;
-      font-size: 25px;
-      font-family: "Permanent Marker", cursive;
-    }
+  h3 {
+    margin: 0;
+    font-size: 25px;
+    font-family: "Permanent Marker", cursive;
   }
 `;

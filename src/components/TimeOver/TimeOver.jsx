@@ -1,4 +1,5 @@
 import { ModalWindow } from "./TimeOver.styled";
+import PropTypes from "prop-types";
 
 export default function TimeOver({
   restart,
@@ -18,7 +19,7 @@ export default function TimeOver({
   return (
     <ModalWindow>
       <h2>
-        Нажаль ви вичерпали свій час, натисніть кнопку 'Спробувати знову' щоб
+        Нажаль ви вичерпали свiй час, натиснiть кнопку 'Спробувати знову' щоб
         пройти тест ще раз!
       </h2>
       <hr />
@@ -26,3 +27,11 @@ export default function TimeOver({
     </ModalWindow>
   );
 }
+
+TimeOver.protoTypes = {
+  restart: PropTypes.func.isRequired,
+  setActive: PropTypes.func.isRequired,
+  page: PropTypes.func.isRequired,
+  setCompletedAnswers: PropTypes.func.isRequired,
+  setLevel: PropTypes.func.isRequired,
+};
